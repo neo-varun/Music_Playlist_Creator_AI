@@ -1,0 +1,7 @@
+# Build directories
+build/
+dist/
+Chatbot.egg-info/
+
+# Python cache directories
+**/__pycache__/
