@@ -3,34 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Playlist Creator</title>
 </head>
 <body>
-    <div>
-        <h1>Chatbot v1</h1>
-        <form id="chat-form" action="/chat" method="POST">
-            <input type="text" name="user_input" id="user-input" placeholder="Type your message here">
-            <button type="submit">Send</button>
-        </form>
+    <h1>Welcome to the Playlist Creator!</h1>
+    <form action="/submit" method="POST">
 
-        <div id="chat-container">
-            <p id="bot-response"></p>
-        </div>
-    </div>
-
-    <script>
-        // Handle form submission using jQuery
-        $('#chat-form').submit(function(event) {
-            event.preventDefault();  // Prevent default form submission
-
-            var userInput = $('#user-input').val();
-            $.post('/chat', { user_input: userInput }, function(data) {
-                // Display bot's response in the chat container
-                $('#bot-response').text(data.response);
-                $('#user-input').val('');  // Clear input field
-            });
-        });
-    </script>
+        <label for="language">What languages would you like your songs in?</label><br>
+        <input type="text" id="language" name="language" required><br><br>
+        
+        <label for="genre">What genre of music would you like?</label><br>
+        <input type="text" id="genre" name="genre" required><br><br>
+        
+        <label for="artists">Do you have any specific artists in mind?</label><br>
+        <input type="text" id="artists" name="artists" required><br><br>
+        
+        <label for="era">Do you prefer any specific era or year for the songs?</label><br>
+        <input type="text" id="era" name="era" required><br><br>
+        
+        <label for="feeling">How are you feeling today?</label><br>
+        <input type="text" id="feeling" name="feeling" required><br><br>
+        
+        <input type="submit" value="Submit">
+    </form>
 </body>
 </html>
