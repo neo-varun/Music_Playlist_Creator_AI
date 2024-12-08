@@ -1,6 +1,7 @@
 from openai import OpenAI
 
-client=OpenAI() # Retrieves the key from os.environ.get('OPENAI_API_KEY').
+# Retrieves the key from os.environ.get('OPENAI_API_KEY')
+client=OpenAI()
 
 def generate_playlist(language, genre, artist, era, feeling):
 
@@ -12,8 +13,6 @@ def generate_playlist(language, genre, artist, era, feeling):
     prompt += f"Year/Era Preference: {era}\n"
     prompt += f"Mood/Feeling: {feeling}\n"
     prompt += f"Respond only in this format: Song - Album - Artist - Year"
-
-    print(prompt)
 
     try:
         # Sending the prompt to OpenAI's API and getting the response

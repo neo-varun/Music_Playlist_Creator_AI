@@ -1,10 +1,9 @@
-import requests
-import base64
 import os
+import base64
+import requests
 
 def spot_access_token():
 
-    # Fetch Spotify credentials from environment variables
     client_id = os.getenv('SPOTIFY_CLIENT_ID')  # Make sure this is set in your environment
     client_secret = os.getenv('SPOTIFY_CLIENT_SECRET')  # Make sure this is set in your environment
 

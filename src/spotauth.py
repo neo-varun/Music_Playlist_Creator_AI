@@ -1,17 +1,18 @@
-from flask import Flask, request, session
 import os
 import requests
+from flask import Flask, request, session
 
 CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
 CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
-REDIRECT_URI = os.getenv("SPOTIFY_REDIRECT_URI")  # Example: http://localhost:8888/callback
+REDIRECT_URI = os.getenv("SPOTIFY_REDIRECT_URI")  # Make sure this is set in your environment
 SCOPES = "playlist-modify-public playlist-modify-private"
 
 app = Flask(__name__)
 
 @app.route('/callback')
 def callback():
-    code = request.args.get('code')  # Get the authorization code from URL
+    # Get the authorization code from URL
+    code = request.args.get('code')
 
     if not code:
         return "Error: No code found in the URL"
@@ -39,7 +40,7 @@ def callback():
         # Store the access token and refresh token in the session
         session['access_token'] = access_token
         session['refresh_token'] = refresh_token
-        return f"Access Token: {access_token}"  # Display the access token for the user
+        return f"{access_token}"
     else:
         return f"Error fetching access token: {response.json()}"
     
@@ -47,7 +48,7 @@ def refresh_access_token():
     refresh_token = session.get('refresh_token')
     
     if not refresh_token:
-        return None  # No refresh token found
+        return None
 
     token_url = "https://accounts.spotify.com/api/token"
     headers = {
@@ -64,8 +65,9 @@ def refresh_access_token():
 
     if response.status_code == 200:
         new_access_token = response.json()['access_token']
+
         # Store the new access token in session
         session['access_token'] = new_access_token
         return new_access_token
     else:
-        return None  # Error refreshing token
+        return None

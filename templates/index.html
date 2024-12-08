@@ -3,28 +3,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Playlist Creator</title>
+    <title>Playlist Creator Chatbot</title>
+    <style>
+        /* Body Styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #2a2a2a;
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Chat Container */
+        #chat-container {
+            background: rgba(18, 18, 18, 0.95);
+            border-radius: 16px;
+            padding: 20px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            height: 80vh;
+            overflow: hidden;
+            border: 2px solid #1db954;
+        }
+
+        /* Chatbox */
+        #chatbox {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            border-bottom: 2px solid #1db954;
+            margin-bottom: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: #1db954 transparent;
+        }
+
+        #chatbox::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #chatbox::-webkit-scrollbar-thumb {
+            background: #1db954;
+            border-radius: 4px;
+        }
+
+        #chatbox::-webkit-scrollbar-thumb:hover {
+            background: #17a747;
+        }
+
+        /* Message Styles */
+        .message {
+            display: inline-block;
+            margin: 10px 0;
+            padding: 10px 15px;
+            border-radius: 20px;
+            max-width: 75%;
+            font-size: 1rem;
+            line-height: 1.4;
+            position: relative;
+        }
+
+        .bot-message {
+            background: #262626;
+            color: #1db954;
+            align-self: flex-start;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .bot-message::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: -10px;
+            margin-top: -6px;
+            border-width: 6px;
+            border-style: solid;
+            border-color: transparent transparent transparent #262626;
+        }
+
+        .user-message {
+            background: #1db954;
+            color: #000;
+            align-self: flex-end;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-message::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            right: -10px;
+            margin-top: -6px;
+            border-width: 6px;
+            border-style: solid;
+            border-color: transparent #1db954 transparent transparent;
+        }
+
+        /* Input Area */
+        #input-area {
+            display: flex;
+            gap: 10px;
+        }
+
+        #user-input {
+            flex: 1;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #333;
+            border-radius: 8px;
+            outline: none;
+            background: #121212;
+            color: #fff;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        #send-btn {
+            padding: 10px 20px;
+            background: #1db954;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        #send-btn:hover {
+            background: #17a747;
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            #chat-container {
+                padding: 15px;
+                height: 90vh;
+            }
+
+            .message {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to the Playlist Creator!</h1>
-    <form action="/submit" method="POST">
+    <div id="chat-container">
+        <div id="chatbox">
+            <div class="message bot-message">
+                Hi! I'm your personal Playlist Creator. Let's create a playlist that suits your vibe! 🎧
+            </div>           
+        </div>
+        <div id="input-area">
+            <input type="text" id="user-input" placeholder="Type your answer..." />
+            <button id="send-btn">Send</button>
+        </div>
+    </div>
 
-        <label for="language">What languages would you like your songs in?</label><br>
-        <input type="text" id="language" name="language" required><br><br>
-        
-        <label for="genre">What genre of music would you like?</label><br>
-        <input type="text" id="genre" name="genre" required><br><br>
-        
-        <label for="artists">Do you have any specific artists in mind?</label><br>
-        <input type="text" id="artists" name="artist" required><br><br>
-        
-        <label for="era">Do you prefer any specific era or year for the songs?</label><br>
-        <input type="text" id="era" name="era" required><br><br>
-        
-        <label for="feeling">How are you feeling today?</label><br>
-        <input type="text" id="feeling" name="feeling" required><br><br>
-        
-        <input type="submit" value="Submit">
+    <!-- Form to submit responses -->
+    <form id="playlist-form" action="/submit" method="POST" style="display: none;">
+        <input type="text" name="language" id="language" />
+        <input type="text" name="genre" id="genre" />
+        <input type="text" name="artist" id="artist" />
+        <input type="text" name="era" id="era" />
+        <input type="text" name="feeling" id="feeling" />
     </form>
+
+    <script>
+        const chatbox = document.getElementById("chatbox");
+        const userInput = document.getElementById("user-input");
+        const sendBtn = document.getElementById("send-btn");
+
+        const questions = [
+            "What languages would you like your songs in?",
+            "What genres of music do you prefer?",
+            "Do you have any specific artists in mind?",
+            "Do you prefer any specific era or year for the songs?",
+            "How are you feeling today?",
+        ];
+
+        let step = 0;
+        let responses = {};
+
+        // Function to add messages to the chatbox
+        function addMessage(content, sender = "bot") {
+            const message = document.createElement("div");
+            message.className = `message ${sender === "bot" ? "bot-message" : "user-message"}`;
+            message.textContent = content;
+            chatbox.appendChild(message);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        // Function to handle user input
+        function handleInput() {
+            const userResponse = userInput.value.trim();
+
+            if (!userResponse) return;
+
+            // Add user message to chat
+            addMessage(userResponse, "user");
+
+            // Save response
+            const currentQuestion = questions[step];
+            if (step > 0) {
+                responses[currentQuestion] = userResponse;
+            }
+
+            // Update the hidden form inputs
+            if (step === 0) document.getElementById("language").value = userResponse;
+            if (step === 1) document.getElementById("genre").value = userResponse;
+            if (step === 2) document.getElementById("artist").value = userResponse;
+            if (step === 3) document.getElementById("era").value = userResponse;
+            if (step === 4) document.getElementById("feeling").value = userResponse;
+
+            userInput.value = "";
+
+            // Move to the next step or submit
+            if (step < questions.length - 1) {
+                setTimeout(() => addMessage(questions[++step]), 1000);
+            } else {
+                setTimeout(() => {
+                    addMessage("Thank you! We are creating your playlist hold on ... 🎶", "bot");
+                    // Submit the form after all questions are answered
+                    submitForm();
+                }, 1000);
+            }
+        }
+
+        // Function to submit the form using fetch
+        function submitForm() {
+            const formData = new FormData(document.getElementById("playlist-form"));
+
+            fetch("/submit", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Display the success message and playlist URL in the chat
+                addMessage(`${data.message} ${data.playlist_url}`, "bot");
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                addMessage("There was an error creating your playlist. Please try again.", "bot");
+            });
+        }
+
+        // Event Listeners
+        sendBtn.addEventListener("click", handleInput);
+        userInput.addEventListener("keypress", function (e) {
+            if (e.key === "Enter") {
+                handleInput();
+            }
+        });
+
+        // Start the conversation
+        addMessage(questions[step]);
+    </script>
 </body>
 </html>
