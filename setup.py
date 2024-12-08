@@ -8,6 +8,7 @@ setup(
     install_requires=[
         'openai',
         'flask',
+        'requests'
     ],
     packages=find_packages()
 )
