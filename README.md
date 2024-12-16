@@ -32,7 +32,7 @@ Features of the Music Playlist Creator
    - The app generates playlists based on criteria like language, genre, artists, mood, and era.
 
 4. OpenAI GPT Integration:
-   - GPT-3 powers the chatbot, making the interaction natural and responsive to user input.
+   - GPT-4 powers the chatbot, making the interaction natural and responsive to user input.
 
 5. Link to Generated Playlist:
    - After playlist creation, the user receives a link to their custom Spotify playlist, which can be shared or saved.
